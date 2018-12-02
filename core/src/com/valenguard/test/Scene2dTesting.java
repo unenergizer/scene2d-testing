@@ -17,8 +17,10 @@ public class Scene2dTesting extends ApplicationAdapter implements InputProcessor
         stageHandler = new StageHandler();
 
         InputMultiplexer multiplexer = new InputMultiplexer();
+
+        multiplexer.addProcessor(stageHandler);
         multiplexer.addProcessor(stageHandler.getStage());
-        multiplexer.addProcessor(this);
+//        multiplexer.addProcessor(this);
 
         Gdx.input.setInputProcessor(multiplexer);
 

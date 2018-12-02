@@ -1,72 +1,65 @@
 package com.valenguard.test.ui.actors;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.kotcrab.vis.ui.Focusable;
+import com.kotcrab.vis.ui.util.TableUtils;
+import com.kotcrab.vis.ui.widget.VisTable;
+import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.valenguard.test.ui.Buildable;
-import com.valenguard.test.ui.MovableWindow;
-import com.valenguard.test.ui.StageHandler;
+import com.valenguard.test.ui.HideableVisWindow;
 
-public class EscapeTable extends MovableWindow implements Buildable {
+public class EscapeTable extends HideableVisWindow implements Buildable, Focusable {
 
-    private final StageHandler stageHandler;
-
-    public EscapeTable(StageHandler stageHandler) {
-        super(stageHandler.getSkin());
-        this.stageHandler = stageHandler;
+    public EscapeTable() {
+        super("");
     }
 
     @Override
     public Actor build() {
-        setWidth(Gdx.graphics.getWidth());
-        setHeight(Gdx.graphics.getHeight());
-        setBounds(0, 0, getWidth(), getHeight());
-        setFillParent(true);
+        setMovable(false);
+        TableUtils.setSpacingDefaults(this);
+        VisTable table = new VisTable();
 
-        Table outsideTable = new Table();
-        Table innerTable = new Table();
-
-        TextButton help = new TextButton("Help", stageHandler.getSkin());
-        TextButton settings = new TextButton("Settings", stageHandler.getSkin());
-        TextButton logout = new TextButton("Logout", stageHandler.getSkin());
-        TextButton exitGame = new TextButton("Exit Game", stageHandler.getSkin());
-        TextButton returnToGame = new TextButton("Return to Game", stageHandler.getSkin());
+        VisTextButton help = new VisTextButton("Help");
+        VisTextButton credits = new VisTextButton("Credits");
+        VisTextButton settings = new VisTextButton("Settings");
+        VisTextButton logout = new VisTextButton("Logout");
+        VisTextButton exitGame = new VisTextButton("Exit Game");
+        VisTextButton returnToGame = new VisTextButton("Return to Game");
         returnToGame.setColor(Color.GREEN);
 
-        innerTable.pad(3);
-        innerTable.add(help).expand().fill().pad(0, 0, 3, 0);
-        innerTable.row();
-        innerTable.add(settings).expand().fill().pad(0, 0, 3, 0);
-        innerTable.row();
-        innerTable.add(logout).expand().fill().pad(0, 0, 3, 0);
-        innerTable.row();
-        innerTable.add(exitGame).expand().fill().pad(0, 0, 6, 0);
-        innerTable.row();
-        innerTable.add(returnToGame).expand().fill();
-        innerTable.row();
-        innerTable.center();
+        pad(3);
 
-        outsideTable.setFillParent(true);
-        outsideTable.add(innerTable);
-        addActor(outsideTable);
+        table.add(help).fill().pad(0, 0, 3, 0);
+        table.row();
+        table.add(credits).fill().pad(0, 0, 3, 0);
+        table.row();
+        table.add(settings).fill().pad(0, 0, 3, 0);
+        table.row();
+        table.add(logout).fill().pad(0, 0, 3, 0);
+        table.row();
+        table.add(exitGame).fill().pad(0, 0, 6, 0);
+        table.row();
+        table.add(returnToGame).fill();
+        table.row();
 
-        addListener(new InputListener() {
-            @Override
-            public boolean keyDown(InputEvent event, int keycode) {
-                if (keycode != Input.Keys.ESCAPE) return false;
-                setVisible(!isVisible());
-                return true;
-            }
-        });
+        add(table);
 
-//        setVisible(true);
-//        setVisible(false);
+        pack();
+        centerWindow();
 
+        setVisible(false);
         return this;
+    }
+
+    @Override
+    public void focusLost() {
+
+    }
+
+    @Override
+    public void focusGained() {
+
     }
 }

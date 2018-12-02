@@ -2,23 +2,23 @@ package com.valenguard.test.ui.actors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.kotcrab.vis.ui.Focusable;
+import com.kotcrab.vis.ui.widget.VisScrollPane;
+import com.kotcrab.vis.ui.widget.VisTextArea;
+import com.kotcrab.vis.ui.widget.VisTextField;
+import com.kotcrab.vis.ui.widget.VisWindow;
 import com.valenguard.test.ui.Buildable;
-import com.valenguard.test.ui.MovableWindow;
 import com.valenguard.test.ui.StageHandler;
+import com.valenguard.test.util.Log;
 
-public class ChatWindow extends MovableWindow implements Buildable {
+public class ChatWindow extends VisWindow implements Buildable, Focusable {
 
     private final StageHandler stageHandler;
-    private TextArea messagesDisplay;
-    private TextField messageInput;
+    private VisTextArea messagesDisplay;
+    private VisTextField messageInput;
 
     /**
      * Determines if the chat area should be listening to text input.
@@ -33,7 +33,7 @@ public class ChatWindow extends MovableWindow implements Buildable {
     private boolean displayEmpty = true;
 
     public ChatWindow(StageHandler stageHandler) {
-        super(stageHandler.getSkin());
+        super("");
         this.stageHandler = stageHandler;
     }
 
@@ -42,21 +42,20 @@ public class ChatWindow extends MovableWindow implements Buildable {
         final int innerPadding = 5;
         pad(innerPadding);
         setResizable(true);
-        setColor(Color.BLUE);
-
-//        setPosition(stageHandler.getStage().getViewport().getScreenWidth() - this.getWidth(), 0);
-
-        Table table = new Table();
-        table.setFillParent(true);
-        table.setColor(0, 0, 0, .5f);
-
-        addActor(table);
+        setPosition(0, 0);
         setWidth(300);
         setHeight(200);
 
-        messagesDisplay = new TextArea(null, getSkin());
-        ScrollPane scrollPane = new ScrollPane(messagesDisplay, getSkin());
-        messageInput = new TextField(null, getSkin());
+        messagesDisplay = new VisTextArea(null);
+
+        VisScrollPane scrollPane = new VisScrollPane(messagesDisplay);
+        scrollPane.setOverscroll(false, true);
+        scrollPane.setFlickScroll(false);
+        scrollPane.setFadeScrollBars(false);
+        scrollPane.setScrollbarsOnTop(true);
+        scrollPane.setScrollingDisabled(true, false);
+
+        messageInput = new VisTextField(null);
         messageInput.setFocusTraversal(false);
 
         // Prevent client from typing in message area
@@ -65,7 +64,7 @@ public class ChatWindow extends MovableWindow implements Buildable {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 stageHandler.getStage().setKeyboardFocus(null);
                 Gdx.input.setOnscreenKeyboardVisible(false);
-                return true;
+                return false;
             }
 
             @Override
@@ -90,8 +89,19 @@ public class ChatWindow extends MovableWindow implements Buildable {
         addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
+                Log.println(ChatWindow.class, "Listener ran");
                 if (keycode == Input.Keys.ENTER) {
-                    if (chatToggled) {
+
+//                    if (chatToggled) {
+//                        chatToggled = false;
+//                        Log.println(ChatWindow.class, "chatToggled = false");
+//                    } else {
+//                        chatToggled = true;
+//                        Log.println(ChatWindow.class, "chatToggled = false");
+//                    }
+
+                    if (!chatToggled) {
+                        Log.println(ChatWindow.class, "chatToggled = false");
                         String message = messageInput.getText();
                         chatToggled = false;
                         stageHandler.getStage().setKeyboardFocus(null);
@@ -99,6 +109,7 @@ public class ChatWindow extends MovableWindow implements Buildable {
                         messageInput.setText("");
                         Gdx.input.setOnscreenKeyboardVisible(false);
                     } else {
+                        Log.println(ChatWindow.class, "chatToggled = true");
                         chatToggled = true;
                         stageHandler.getStage().setKeyboardFocus(messageInput);
                     }
@@ -108,9 +119,10 @@ public class ChatWindow extends MovableWindow implements Buildable {
             }
         });
 
-        table.add(scrollPane).expandX().expandY().fill().pad(0 + innerPadding, 1 + innerPadding, 5, 1 + innerPadding);
-        table.row();
-        table.add(messageInput).expandX().fill().pad(0 + innerPadding, 1 + innerPadding, 0 + innerPadding, 1 + innerPadding);
+        add(messagesDisplay).expand().fill().grow();
+        row();
+        add(messageInput).expandX().fillX().padTop(3);
+
         return this;
     }
 
@@ -123,5 +135,27 @@ public class ChatWindow extends MovableWindow implements Buildable {
             // does not have a blank line (line return) as the bottom message.
             messagesDisplay.appendText("\n" + message);
         }
+    }
+
+    public boolean isChatToggled() {
+        return chatToggled;
+    }
+
+    public void setChatToggled(boolean chatToggled) {
+        this.chatToggled = chatToggled;
+    }
+
+    public VisTextField getMessageInput() {
+        return messageInput;
+    }
+
+    @Override
+    public void focusLost() {
+
+    }
+
+    @Override
+    public void focusGained() {
+
     }
 }
