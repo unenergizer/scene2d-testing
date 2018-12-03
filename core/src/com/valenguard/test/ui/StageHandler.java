@@ -8,7 +8,6 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Disposable;
 import com.kotcrab.vis.ui.FocusManager;
 import com.kotcrab.vis.ui.VisUI;
@@ -32,11 +31,6 @@ public class StageHandler implements Disposable, InputProcessor {
 
 
     public void init() {
-        final Table root = new Table();
-        root.setFillParent(true);
-        stage.addActor(root);
-        root.add().expand().fill();
-
         stage.setDebugAll(PRINT_DEBUG);
         VisUI.load(Gdx.files.internal("skin/tixel/x1/tixel.json"));
 
@@ -58,7 +52,6 @@ public class StageHandler implements Disposable, InputProcessor {
             public boolean keyDown(InputEvent event, int keycode) {
                 if (keycode == Input.Keys.F12) {
                     debug = !debug;
-                    root.setDebug(debug, true);
                     for (Actor actor : stage.getActors()) {
                         if (actor instanceof Group) {
                             Group group = (Group) actor;
@@ -105,8 +98,6 @@ public class StageHandler implements Disposable, InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-
-
         if (keycode == Input.Keys.ESCAPE) {
             if (!escapeTable.isVisible()) {
                 escapeTable.fadeIn().setVisible(true);
@@ -128,7 +119,6 @@ public class StageHandler implements Disposable, InputProcessor {
 
         if (keycode == Input.Keys.I) {
             if (!chatWindow.isChatToggled()) {
-                System.out.println("I is set focus to the inventory");
                 if (!inventoryWindow.isVisible()) {
                     inventoryWindow.fadeIn().setVisible(true);
                     FocusManager.switchFocus(stage, inventoryWindow);
@@ -138,7 +128,6 @@ public class StageHandler implements Disposable, InputProcessor {
                 return true;
             }
         }
-
         return false;
     }
 

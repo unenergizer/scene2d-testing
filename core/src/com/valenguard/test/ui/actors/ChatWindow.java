@@ -5,8 +5,10 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.kotcrab.vis.ui.FocusManager;
 import com.kotcrab.vis.ui.Focusable;
 import com.kotcrab.vis.ui.widget.ScrollableTextArea;
+import com.kotcrab.vis.ui.widget.VisScrollPane;
 import com.kotcrab.vis.ui.widget.VisTextField;
 import com.kotcrab.vis.ui.widget.VisWindow;
 import com.valenguard.test.ui.Buildable;
@@ -15,6 +17,7 @@ import com.valenguard.test.ui.StageHandler;
 public class ChatWindow extends VisWindow implements Buildable, Focusable {
 
     private final StageHandler stageHandler;
+    private VisScrollPane scrollPane;
     private ScrollableTextArea messagesDisplay;
     private VisTextField messageInput;
 
@@ -27,6 +30,8 @@ public class ChatWindow extends VisWindow implements Buildable, Focusable {
      * Used to prevent the Window from crashing due to a "line return" being the first message drawn.
      * Issue: https://github.com/libgdx/libgdx/issues/5319
      * Note: The issue is marked as solved, but apparently still happens.
+     *
+     * UPDATE: This may not be valid anymore as we are using VisWindow components. TODO: Need to retest.
      */
     private boolean displayEmpty = true;
 
@@ -41,12 +46,19 @@ public class ChatWindow extends VisWindow implements Buildable, Focusable {
         pad(innerPadding);
         setResizable(true);
         setPosition(0, 0);
-        setWidth(300);
-        setHeight(200);
+        setWidth(350);
+        setHeight(150);
 
         messagesDisplay = new ScrollableTextArea(null);
         messageInput = new VisTextField(null);
         messageInput.setFocusTraversal(false);
+
+        scrollPane = new VisScrollPane(messagesDisplay);
+        scrollPane.setOverscroll(false, false);
+        scrollPane.setFlickScroll(false);
+        scrollPane.setFadeScrollBars(false);
+        scrollPane.setScrollbarsOnTop(true);
+        scrollPane.setScrollingDisabled(true, false);
 
         // Prevent client from typing in message area
         messagesDisplay.addListener(new InputListener() {
@@ -85,9 +97,11 @@ public class ChatWindow extends VisWindow implements Buildable, Focusable {
                         chatToggled = false;
                         String message = messageInput.getText();
                         stageHandler.getStage().setKeyboardFocus(null);
-                        if (!message.isEmpty()) appendChatMessage(message);
+                        if (!message.isEmpty()) appendChatMessage("username: " + message);
                         messageInput.setText("");
                         Gdx.input.setOnscreenKeyboardVisible(false);
+                        scrollPane.setScrollPercentY(scrollPane.getMaxY());
+                        FocusManager.resetFocus(stageHandler.getStage());
                     } else {
                         chatToggled = true;
                         stageHandler.getStage().setKeyboardFocus(messageInput);
