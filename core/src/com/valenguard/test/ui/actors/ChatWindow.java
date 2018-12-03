@@ -6,18 +6,16 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.kotcrab.vis.ui.Focusable;
-import com.kotcrab.vis.ui.widget.VisScrollPane;
-import com.kotcrab.vis.ui.widget.VisTextArea;
+import com.kotcrab.vis.ui.widget.ScrollableTextArea;
 import com.kotcrab.vis.ui.widget.VisTextField;
 import com.kotcrab.vis.ui.widget.VisWindow;
 import com.valenguard.test.ui.Buildable;
 import com.valenguard.test.ui.StageHandler;
-import com.valenguard.test.util.Log;
 
 public class ChatWindow extends VisWindow implements Buildable, Focusable {
 
     private final StageHandler stageHandler;
-    private VisTextArea messagesDisplay;
+    private ScrollableTextArea messagesDisplay;
     private VisTextField messageInput;
 
     /**
@@ -46,15 +44,7 @@ public class ChatWindow extends VisWindow implements Buildable, Focusable {
         setWidth(300);
         setHeight(200);
 
-        messagesDisplay = new VisTextArea(null);
-
-        VisScrollPane scrollPane = new VisScrollPane(messagesDisplay);
-        scrollPane.setOverscroll(false, true);
-        scrollPane.setFlickScroll(false);
-        scrollPane.setFadeScrollBars(false);
-        scrollPane.setScrollbarsOnTop(true);
-        scrollPane.setScrollingDisabled(true, false);
-
+        messagesDisplay = new ScrollableTextArea(null);
         messageInput = new VisTextField(null);
         messageInput.setFocusTraversal(false);
 
@@ -89,27 +79,16 @@ public class ChatWindow extends VisWindow implements Buildable, Focusable {
         addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
-                Log.println(ChatWindow.class, "Listener ran");
                 if (keycode == Input.Keys.ENTER) {
 
-//                    if (chatToggled) {
-//                        chatToggled = false;
-//                        Log.println(ChatWindow.class, "chatToggled = false");
-//                    } else {
-//                        chatToggled = true;
-//                        Log.println(ChatWindow.class, "chatToggled = false");
-//                    }
-
-                    if (!chatToggled) {
-                        Log.println(ChatWindow.class, "chatToggled = false");
-                        String message = messageInput.getText();
+                    if (chatToggled) {
                         chatToggled = false;
+                        String message = messageInput.getText();
                         stageHandler.getStage().setKeyboardFocus(null);
                         if (!message.isEmpty()) appendChatMessage(message);
                         messageInput.setText("");
                         Gdx.input.setOnscreenKeyboardVisible(false);
                     } else {
-                        Log.println(ChatWindow.class, "chatToggled = true");
                         chatToggled = true;
                         stageHandler.getStage().setKeyboardFocus(messageInput);
                     }
@@ -119,7 +98,7 @@ public class ChatWindow extends VisWindow implements Buildable, Focusable {
             }
         });
 
-        add(messagesDisplay).expand().fill().grow();
+        add(messagesDisplay.createCompatibleScrollPane()).grow().expand().fill();
         row();
         add(messageInput).expandX().fillX().padTop(3);
 

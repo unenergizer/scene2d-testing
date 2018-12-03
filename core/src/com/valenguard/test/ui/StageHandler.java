@@ -122,6 +122,7 @@ public class StageHandler implements Disposable, InputProcessor {
                 FocusManager.switchFocus(stage, chatWindow.getMessageInput());
                 stage.setKeyboardFocus(chatWindow.getMessageInput());
                 chatWindow.setChatToggled(true);
+                return true;
             }
         }
 
