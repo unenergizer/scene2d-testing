@@ -39,8 +39,9 @@ public class InventoryWindow extends HideableVisWindow implements Buildable, Foc
             }
         }
 
-        setPosition(stageHandler.getStage().getViewport().getScreenWidth() - this.getWidth(), 0);
         pack();
+
+        setPosition(stageHandler.getStage().getViewport().getScreenWidth() - this.getWidth(), 0);
         setVisible(false);
         return this;
     }

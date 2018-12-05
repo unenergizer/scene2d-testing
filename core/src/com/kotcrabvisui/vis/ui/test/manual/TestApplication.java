@@ -70,26 +70,27 @@ public class TestApplication extends ApplicationAdapter {
 
         createMenus();
 
-        stage.addActor(new TestCollapsible());
-        stage.addActor(new TestColorPicker());
-//        if (Gdx.app.getType() == ApplicationType.Desktop) stage.addActor(new TestFileChooser());
-        stage.addActor(new TestWindow());
-        stage.addActor(new TestSplitPane());
-        stage.addActor(new TestTextAreaAndScroll());
-        stage.addActor(new TestTree());
-        stage.addActor(new TestVertical());
-        stage.addActor(new TestFormValidator());
-        stage.addActor(new TestDialogs());
-        stage.addActor(new TestValidator());
-        stage.addActor(new TestBuilders());
-//		stage.addActor(new TestTabbedPane(false));
-//		stage.addActor(new TestFlowGroup());
-//		stage.addActor(new TestButtonBar());
-//		stage.addActor(new TestListView());
+//        stage.addActor(new TestCollapsible());
+//        stage.addActor(new TestColorPicker());
+////        if (Gdx.app.getType() == ApplicationType.Desktop) stage.addActor(new TestFileChooser());
+//        stage.addActor(new TestWindow());
+//        stage.addActor(new TestSplitPane());
+//        stage.addActor(new TestTextAreaAndScroll());
+//        stage.addActor(new TestTree());
+//        stage.addActor(new TestVertical());
+//        stage.addActor(new TestFormValidator());
+//        stage.addActor(new TestDialogs());
+//        stage.addActor(new TestValidator());
+//        stage.addActor(new TestBuilders());
+        stage.addActor(new TestTabbedPane(false));
+        stage.addActor(new TestTabbedPane(true));
+        stage.addActor(new TestFlowGroup());
+        stage.addActor(new TestButtonBar());
+        stage.addActor(new TestListView());
         stage.addActor(new TestToasts(stage));
-//		stage.addActor(new TestHighlightTextArea());
-//		stage.addActor(new TestBusyBar());
-//		stage.addActor(new TestMultiSplitPane());
+        stage.addActor(new TestHighlightTextArea());
+        stage.addActor(new TestBusyBar());
+        stage.addActor(new TestMultiSplitPane());
 
         stage.addListener(new InputListener() {
             boolean debug = false;

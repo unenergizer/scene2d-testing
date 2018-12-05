@@ -13,6 +13,7 @@ import com.kotcrab.vis.ui.widget.VisTextField;
 import com.kotcrab.vis.ui.widget.VisWindow;
 import com.valenguard.test.ui.Buildable;
 import com.valenguard.test.ui.StageHandler;
+import com.valenguard.test.util.Log;
 
 public class ChatWindow extends VisWindow implements Buildable, Focusable {
 
@@ -30,7 +31,7 @@ public class ChatWindow extends VisWindow implements Buildable, Focusable {
      * Used to prevent the Window from crashing due to a "line return" being the first message drawn.
      * Issue: https://github.com/libgdx/libgdx/issues/5319
      * Note: The issue is marked as solved, but apparently still happens.
-     *
+     * <p>
      * UPDATE: This may not be valid anymore as we are using VisWindow components. TODO: Need to retest.
      */
     private boolean displayEmpty = true;
@@ -91,20 +92,32 @@ public class ChatWindow extends VisWindow implements Buildable, Focusable {
         addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
-                if (keycode == Input.Keys.ENTER) {
+                if (keycode == Input.Keys.ENTER || (keycode == Input.Keys.ESCAPE && chatToggled)) {
 
-                    if (chatToggled) {
-                        chatToggled = false;
+                    if (chatToggled && keycode != Input.Keys.ESCAPE) {
+                        Log.println(getClass(), "Enter hit: no escape");
+                        // The player hit the enter key, his message will now be sent!
+                        // We also clear the message input
                         String message = messageInput.getText();
-                        stageHandler.getStage().setKeyboardFocus(null);
                         if (!message.isEmpty()) appendChatMessage("username: " + message);
                         messageInput.setText("");
-                        Gdx.input.setOnscreenKeyboardVisible(false);
                         scrollPane.setScrollPercentY(scrollPane.getMaxY());
+
+                        chatToggled = false;
+                        Gdx.input.setOnscreenKeyboardVisible(false);
+                        FocusManager.resetFocus(stageHandler.getStage());
+                    } else if (chatToggled && keycode == Input.Keys.ESCAPE) {
+                        Log.println(getClass(), "Enter hit: escape");
+                        // Player was typing a message but hit the escape key.
+                        // Reset the focus back to the stage and save players message.
+                        chatToggled = false;
+                        Gdx.input.setOnscreenKeyboardVisible(false);
                         FocusManager.resetFocus(stageHandler.getStage());
                     } else {
-                        chatToggled = true;
-                        stageHandler.getStage().setKeyboardFocus(messageInput);
+                        Log.println(getClass(), "Enter hit: else?????");
+                        Log.println(ChatWindow.class, "Something should happen here???", true);
+//                        chatToggled = true;
+//                        stageHandler.getStage().setKeyboardFocus(messageInput);
                     }
                     return true;
                 }
@@ -112,7 +125,7 @@ public class ChatWindow extends VisWindow implements Buildable, Focusable {
             }
         });
 
-        add(messagesDisplay.createCompatibleScrollPane()).grow().expand().fill();
+        add(messagesDisplay).grow().expand().fill();
         row();
         add(messageInput).expandX().fillX().padTop(3);
 
